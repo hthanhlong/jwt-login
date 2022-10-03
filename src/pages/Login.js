@@ -1,71 +1,81 @@
-import { useRef, useState, useEffect } from "react";
-import useAuth from "../hooks/useAuth";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { useRef, useState, useEffect } from 'react'
+import useAuth from '../hooks/useAuth'
+import {
+  Link,
+  useNavigate,
+  useLocation,
+  createRoutesFromElements,
+} from 'react-router-dom'
 
-import axios from "../api/axios";
-const LOGIN_URL = "/auth";
+import axios from '../api/axios'
+const LOGIN_URL = '/login'
 
 const Login = () => {
-  const { setAuth } = useAuth();
+  const { setAuth } = useAuth()
 
-  const navigate = useNavigate();
-  const location = useLocation();
-  const from = location.state?.from?.pathname || "/";
+  const navigate = useNavigate()
+  const location = useLocation()
+  const from = location.state?.from?.pathname || '/'
 
-  const userRef = useRef();
-  const errRef = useRef();
+  const userRef = useRef()
+  const errRef = useRef()
 
-  const [user, setUser] = useState("");
-  const [pwd, setPwd] = useState("");
-  const [errMsg, setErrMsg] = useState("");
- 
-  useEffect(() => {
-    userRef.current.focus();
-  }, []);
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [errMsg, setErrMsg] = useState('')
 
   useEffect(() => {
-    setErrMsg("");
-  }, [user, pwd]);
+    userRef.current.focus()
+    return () => {
+      if (!userRef) {
+        setAuth({})
+      }
+    }
+  }, [])
+
+  useEffect(() => {
+    setErrMsg('')
+  }, [email, password])
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault()
 
     try {
       const response = await axios.post(
         LOGIN_URL,
-        JSON.stringify({ user, pwd }),
+        JSON.stringify({ email, password }),
         {
-          headers: { "Content-Type": "application/json" },
-          withCredentials: true,
-        }
-      );
-      console.log(JSON.stringify(response?.data));
+          headers: { 'Content-Type': 'application/json' },
+        },
+      )
+      console.log(JSON.stringify(response?.data))
       //console.log(JSON.stringify(response));
-      const accessToken = response?.data?.accessToken;
-      const roles = response?.data?.roles;
-      setAuth({ roles, accessToken });
-      setUser("");
-      setPwd("");
-      navigate(from, { replace: true });
+      const accessToken = response?.data?.data?.accessToken
+      const refreshToken = response?.data?.data?.refreshToken
+      const roles = response?.data?.data?.roles
+      setAuth({ roles, accessToken, refreshToken })
+      setEmail('')
+      setPassword('')
+      navigate('/')
     } catch (err) {
       if (!err?.response) {
-        setErrMsg("No Server Response");
+        setErrMsg('No Server Response')
       } else if (err.response?.status === 400) {
-        setErrMsg("Missing Username or Password");
+        setErrMsg('Missing Username or Password')
       } else if (err.response?.status === 401) {
-        setErrMsg("Unauthorized");
+        setErrMsg('Unauthorized')
       } else {
-        setErrMsg("Login Failed");
+        setErrMsg('Login Failed')
       }
-      errRef.current.focus();
+      errRef.current.focus()
     }
-  };
+  }
 
   return (
     <section>
       <p
         ref={errRef}
-        className={errMsg ? "errmsg" : "offscreen"}
+        className={errMsg ? 'errmsg' : 'offscreen'}
         aria-live="assertive"
       >
         {errMsg}
@@ -78,8 +88,8 @@ const Login = () => {
           id="username"
           ref={userRef}
           autoComplete="off"
-          onChange={(e) => setUser(e.target.value)}
-          value={user}
+          onChange={(e) => setEmail(e.target.value)}
+          value={email}
           required
         />
 
@@ -87,8 +97,8 @@ const Login = () => {
         <input
           type="password"
           id="password"
-          onChange={(e) => setPwd(e.target.value)}
-          value={pwd}
+          onChange={(e) => setPassword(e.target.value)}
+          value={password}
           required
         />
         <button>Sign In</button>
@@ -101,7 +111,7 @@ const Login = () => {
         </span>
       </p>
     </section>
-  );
-};
+  )
+}
 
-export default Login;
+export default Login

@@ -4,9 +4,9 @@ import { Layout } from './layouts'
 import { Admin, Home, Login, Missing, Register, Unauthorized } from './pages'
 
 const ROLES = {
-  User: 2001,
-  Editor: 1984,
-  Admin: 5150,
+  User: 'user',
+  Editor: 'editor',
+  Admin: 'admin',
 }
 
 function App() {
@@ -19,7 +19,13 @@ function App() {
         <Route path="unauthorized" element={<Unauthorized />} />
 
         {/* we want to protect these routes */}
-        <Route element={<RequireAuth allowedRoles={[ROLES.User]} />}>
+        <Route
+          element={
+            <RequireAuth
+              allowedRoles={[ROLES.User, ROLES.Admin, ROLES.Editor]}
+            />
+          }
+        >
           <Route path="/" element={<Home />} />
         </Route>
 
