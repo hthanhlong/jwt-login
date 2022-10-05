@@ -1,6 +1,7 @@
 import { useNavigate, Link } from 'react-router-dom'
 import { useContext } from 'react'
 import AuthContext from '../context/AuthProvider'
+import Users from '../components/Users'
 
 const Home = () => {
   const { setAuth } = useContext(AuthContext)
@@ -26,6 +27,7 @@ const Home = () => {
       <Link to="/lounge">Go to the Lounge</Link>
       <br />
       <Link to="/linkpage">Go to the link page</Link>
+      <Users />
       <div className="flexGrow">
         <button onClick={logout}>Sign Out</button>
       </div>

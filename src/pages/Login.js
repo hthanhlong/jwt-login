@@ -1,11 +1,6 @@
 import { useRef, useState, useEffect } from 'react'
 import useAuth from '../hooks/useAuth'
-import {
-  Link,
-  useNavigate,
-  useLocation,
-  createRoutesFromElements,
-} from 'react-router-dom'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
 
 import axios from '../api/axios'
 const LOGIN_URL = '/login'
@@ -14,8 +9,6 @@ const Login = () => {
   const { setAuth } = useAuth()
 
   const navigate = useNavigate()
-  const location = useLocation()
-  const from = location.state?.from?.pathname || '/'
 
   const userRef = useRef()
   const errRef = useRef()
@@ -48,8 +41,6 @@ const Login = () => {
           headers: { 'Content-Type': 'application/json' },
         },
       )
-      console.log(JSON.stringify(response?.data))
-      //console.log(JSON.stringify(response));
       const accessToken = response?.data?.data?.accessToken
       const refreshToken = response?.data?.data?.refreshToken
       const roles = response?.data?.data?.roles
